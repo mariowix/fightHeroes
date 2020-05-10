@@ -1,0 +1,1 @@
+console.error("Error: Cannot find module 'C:\\Users\\Mario Mixtega\\Documents\\repo\\fightHeroes\\main.js' from 'C:\\Users\\Mario Mixtega\\Documents\\repo\\fightHeroes'");
