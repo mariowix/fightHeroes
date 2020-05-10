@@ -1,0 +1,23 @@
+{
+  "name": "shape_shooter",
+  "version": "1.0.0",
+  "description": "Shooter of shapes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mariowix/fightHeroes.git"
+  },
+  "author": "Mario Mixtega",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mariowix/fightHeroes/issues"
+  },
+  "homepage": "https://github.com/mariowix/fightHeroes#readme",
+  "dependencies": {
+    "common-js": "^0.3.8",
+    "phaser": "^3.23.0"
+  }
+}
