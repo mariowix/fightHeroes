@@ -5,6 +5,7 @@
 
 const express = require("express");
 const path = require("path");
+const socketio = require("socket.io")
 
 /**
  * App Variables
@@ -26,13 +27,21 @@ app.use(express.static(path.join(__dirname, "public")));
  */
 
 app.get("/", (req, res) => {
-  res.render("index", { title: "Home" });
+  res.render("index");
 });
 
 /**
  * Server Activation
  */
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Listening to requests on http://localhost:${port}`);
+});
+
+var io = socketio(server)
+
+io.on('connection', (socket) => {
+  console.log('socket conected ', socket.id);
+
+  
 });
