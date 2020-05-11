@@ -10,7 +10,7 @@ class MenuScene extends Phaser.Scene {
     }
 
     create() {
-        var input = this.add.inputField(10, 90);
+    
     }
 
     update() {
