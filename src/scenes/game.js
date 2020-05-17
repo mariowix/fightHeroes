@@ -34,9 +34,7 @@ class GameScene extends Phaser.Scene {
         this.back.setOrigin(0, 0);
         this.back.alpha = 0.5
 
-        this.players.add(this.player);
-
-        
+        this.players.add(this.player);        
     }
 
     update() {

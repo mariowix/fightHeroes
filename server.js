@@ -43,5 +43,8 @@ var io = socketio(server)
 io.on('connection', (socket) => {
   console.log('socket conected ', socket.id);
 
+  socket.on('createRoom', () => {
+    
+  });
   
 });

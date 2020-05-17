@@ -1,0 +1,37 @@
+.container {
+    background-color: greenyellow;
+    display: block;
+    width: 320px;
+    height: 410px;
+}
+
+button.btnMenu {
+    color: white;
+    display: block;
+    margin: 0 auto;
+    border: unset;
+    box-shadow: none;
+    box-sizing: unset;
+    width: 200px;
+    height: 100px;
+    background-color: green;
+    font-size: 20px;
+}
+
+button.btnMenu:hover {
+    background-color: indigo;
+    color: white;
+}
+
+input {
+    display: block;
+    margin: 0 auto;
+    font-size: 20px;
+}
+
+label {
+    display: block;
+    margin: 0 auto;
+    font-size: 20px;
+    text-align: center;
+}
