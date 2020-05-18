@@ -6,7 +6,15 @@
 const express = require("express");
 const path = require("path");
 const socketio = require("socket.io");
-const { v4 } = require('uuid')
+const  makeid  = (length) => {
+  let result           = '';
+  const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 
 /**
  * App Variables
@@ -45,10 +53,15 @@ io.on('connection', (socket) => {
   console.log('socket conected ', socket.id);
 
   socket.on('createRoom', () => {
-    const roomName = v4();
+    const roomName = makeid(5);
     socket.join(roomName);
 
     io.sockets.in(roomName).emit('roomCreated', { roomName })
+  });
+
+  // Report event
+  socket.on('playerPosition', (data) => {
+    io.sockets.in(data.roomName).emit('playerPositionUpdate', data)
   });
   
 });

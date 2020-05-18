@@ -18,18 +18,34 @@ class GameScene extends Phaser.Scene {
         this.load.image('background', './assets/back.png');
         this.load.image('arrowIndicator', './assets/arrow_indicator.png');
 
+        this.hashPlayers = {};
+
         this.worldBounds = {
             width: 2024,
             height: 904
         }
+
+        // Create socket events
+        let { global: { socket } } = this.game; 
+
+        socket.on('playerPositionUpdate', (data) => {
+            let player = this.hashPlayers[data.player];
+
+            if (player === this.player) {
+                player.x = data.position.x;
+                player.y = data.position.y;
+            }
+        })
     }
 
     create() {
+        let { socket: { id: socketId } } = this.game.global;
+
         // Configure groups
         this.players = this.add.group();
         this.enemies = this.add.group();
         
-        this.player = new Player(this, 200, 200, this.worldBounds);
+        this.player = new Player(this, 200, 200, this.worldBounds, socketId);
         this.miniMap = new Minimap(this, 10, 10, '', '', this.worldBounds);
         this.enemyCtrl = new EnemiesController(this, 0, 0, this.worldBounds);
         this.onlineInformation = new OnlineInfo(this, this._roomName, this.worldBounds, 0 , 0);
@@ -42,7 +58,10 @@ class GameScene extends Phaser.Scene {
         this.back.setOrigin(0, 0);
         this.back.alpha = 0.5
 
-        this.players.add(this.player);        
+        this.players.add(this.player);
+        this.hashPlayers[socketId] = this.player;
+        
+        console.log(this.game.global)
     }
 
     update() {
@@ -55,6 +74,12 @@ class GameScene extends Phaser.Scene {
 
         this.back.tilePositionX = this.back.x + (xPercent*this.back.width);
         this.back.tilePositionY = this.back.y+ (yPercent*this.back.height);
+    }
+
+    emit(eventName, data) {
+        const { global: { socket } } = this.game;
+
+        socket.emit(eventName, { ...data, roomName: this._roomName })
     }
 }
 

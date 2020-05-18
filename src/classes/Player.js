@@ -2,7 +2,7 @@ const Phaser = require('phaser');
 const { PlayerIndicator } = require('./PlayerIndicator');
  
 class Player extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x = 0, y = 0, worldBounds) {
+    constructor(scene, x, y, worldBounds, socketId) {
         super(scene, x, y, 'entities', 'ship1.png',);
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -14,6 +14,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.health = 100;
         this.maxHealth = 100;
         this.indicator = new PlayerIndicator(this.scene, this.x, this.y, this)
+        this.socketId = socketId;
 
         scene.input.on('pointermove', (pointer) => {
             let { x:x1, y:y1 } = pointer.position;
@@ -52,6 +53,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         this.drawHealth();
+        this.scene.emit('playerPosition', { position: { x: this.x, y: this.y }, health: this.health, player: this.socketId })
     }
 
     outOfBounds() {
