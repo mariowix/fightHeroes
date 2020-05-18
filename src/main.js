@@ -3,7 +3,16 @@ const { GameScene } = require('./scenes/game');
 
 const socket = io.connect('http://localhost:8000');
 
-new Phaser.Game({
+class Game extends Phaser.Game {
+    constructor(socket, phaserConfig) {
+        super(phaserConfig);
+        this.global = {
+            socket
+        }
+    }
+}
+
+new Game(socket, {
     parent: "mainContainner",
     scale: {
         mode: Phaser.Scale.FIT,

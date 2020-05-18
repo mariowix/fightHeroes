@@ -5,7 +5,8 @@
 
 const express = require("express");
 const path = require("path");
-const socketio = require("socket.io")
+const socketio = require("socket.io");
+const { v4 } = require('uuid')
 
 /**
  * App Variables
@@ -44,7 +45,10 @@ io.on('connection', (socket) => {
   console.log('socket conected ', socket.id);
 
   socket.on('createRoom', () => {
-    
+    const roomName = v4();
+    socket.join(roomName);
+
+    io.sockets.in(roomName).emit('roomCreated', { roomName })
   });
   
 });

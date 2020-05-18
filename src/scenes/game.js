@@ -2,10 +2,15 @@ const Phaser = require('phaser');
 const { Player } = require('../classes/Player');
 const { Minimap } = require('../classes/Minimap');
 const { EnemiesController } = require('../classes/EnemiesController');
+const { OnlineInfo } = require('../classes/OnlineInfo');
 
 class GameScene extends Phaser.Scene {
-    constructor() {
+    constructor(data) {
         super('GameScene');
+    }
+
+    init(data) {
+        this._roomName = data.roomName;
     }
 
     preload() {
@@ -27,7 +32,10 @@ class GameScene extends Phaser.Scene {
         this.player = new Player(this, 200, 200, this.worldBounds);
         this.miniMap = new Minimap(this, 10, 10, '', '', this.worldBounds);
         this.enemyCtrl = new EnemiesController(this, 0, 0, this.worldBounds);
+        this.onlineInformation = new OnlineInfo(this, this._roomName, this.worldBounds, 0 , 0);
+
         this.cameras.main.startFollow(this.player);
+
 
         this.back = this.add.tileSprite(0,0,3000,2500, 'background').setDepth(-5);
 

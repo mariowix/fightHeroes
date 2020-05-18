@@ -7,10 +7,16 @@ class MainMenuHandler extends FormHandler {
 
         this.joinRoomHandler = new JoinRoomHandler(this.scene, this);
 
+        let { game: { global: { socket } }} = this.scene;
+
         this.actions = {
             createRoom: () => {
-                // Logic to create the room
-                this.dissapear();
+                socket.emit('createRoom');
+
+                socket.on('roomCreated', data => {
+                    console.log(data)
+                    this.scene.scene.start('GameScene', data);
+                });
             },
             joinRoom: () => {                
                 this.dissapear();
