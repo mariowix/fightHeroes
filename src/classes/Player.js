@@ -23,6 +23,7 @@ class Player extends IPlayer {
     }
 
     preUpdate() {
+        IPlayer.prototype.preUpdate.call(this);
         if (this.btnAcel.isDown) {
             this.scene.physics.velocityFromAngle(this.angle - 90, this.body.maxSpeed, this.body.acceleration)
         } else if (this.btnBreak.isDown) {

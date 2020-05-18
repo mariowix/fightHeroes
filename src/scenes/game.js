@@ -1,5 +1,6 @@
 const Phaser = require('phaser');
 const { Player } = require('../classes/Player');
+const { RemotePlayer } = require('../classes/RemotePlayer')
 const { Minimap } = require('../classes/Minimap');
 const { EnemiesController } = require('../classes/EnemiesController');
 const { OnlineInfo } = require('../classes/OnlineInfo');
@@ -25,17 +26,6 @@ class GameScene extends Phaser.Scene {
             height: 904
         }
 
-        // Create socket events
-        let { global: { socket } } = this.game; 
-
-        socket.on('playerPositionUpdate', (data) => {
-            let player = this.hashPlayers[data.player];
-
-            if (player === this.player) {
-                player.x = data.position.x;
-                player.y = data.position.y;
-            }
-        })
     }
 
     create() {
@@ -60,6 +50,30 @@ class GameScene extends Phaser.Scene {
 
         this.players.add(this.player);
         this.hashPlayers[socketId] = this.player;
+
+        // Create socket events
+        let { global: { socket } } = this.game; 
+
+        socket.on('playerPositionUpdate', (data) => {
+            let player = this.hashPlayers[data.player];
+
+            if (!player) {
+                this.hashPlayers[data.player] =  new RemotePlayer(this, 0, 0, this.worldBounds, data.player);
+                this.players.add(this.hashPlayers[data.player]);
+                return;
+            }
+
+            if (player && player !== this.player) {
+                player.x = data.position.x;
+                player.y = data.position.y;
+            }
+        });
+
+        socket.on('otherJoined', (data) => {
+            this.hashPlayers[data.player] = new RemotePlayer(this, 0, 0, this.worldBounds, data.player);
+
+            this.players.add(this.hashPlayers[data.player]);
+        });
         
         console.log(this.game.global)
     }

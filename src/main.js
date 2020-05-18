@@ -1,6 +1,8 @@
 const { MenuScene } = require('./scenes/menu');
 const { GameScene } = require('./scenes/game');
 const { Game } = require('./game');
+const { Loader } = require('./singletones/Loader');
+
 const socket = io.connect('http://localhost:8000');
 
 

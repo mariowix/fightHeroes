@@ -36,7 +36,7 @@ class FormHandler {
     onClick() {
         this.form.on('click', (event) => {
             let action = this.actions[event.target.id] || (() => {});
-            action();
+            action(event);
         });
     }
 }

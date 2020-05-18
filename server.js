@@ -39,6 +39,13 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
+app.get("/status", (req, res) => {
+  res.json({
+    rooms: io.sockets.adapter.rooms,
+    sockets: io.sockets.clients().length
+  });
+});
+
 /**
  * Server Activation
  */
@@ -52,6 +59,7 @@ var io = socketio(server)
 io.on('connection', (socket) => {
   console.log('socket conected ', socket.id);
 
+  // Create Room
   socket.on('createRoom', () => {
     const roomName = makeid(5);
     socket.join(roomName);
@@ -59,7 +67,20 @@ io.on('connection', (socket) => {
     io.sockets.in(roomName).emit('roomCreated', { roomName })
   });
 
-  // Report event
+  // Join Room
+  socket.on('joinRoom', (data) => {
+    console.log(`${data.player} requested to join to ${data.roomId}`)
+    console.log(io.sockets.adapter.rooms);
+    if (io.sockets.adapter.rooms[data.roomId]) {
+      socket.join(data.roomId)
+      socket.emit('joinedRoom', { roomName: data.roomId });
+      io.sockets.in(data.roomId).emit('otherJoined', { player: data.player })
+    } else {
+      socket.emit('errorJoinedRoom');
+    }
+  });
+
+  // Report player positions
   socket.on('playerPosition', (data) => {
     io.sockets.in(data.roomName).emit('playerPositionUpdate', data)
   });
