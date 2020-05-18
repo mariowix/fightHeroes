@@ -66,6 +66,8 @@ class GameScene extends Phaser.Scene {
             if (player && player !== this.player) {
                 player.x = data.position.x;
                 player.y = data.position.y;
+                player.angle = data.angle;
+                player.health = data.health;
             }
         });
 
@@ -73,6 +75,7 @@ class GameScene extends Phaser.Scene {
             this.hashPlayers[data.player] = new RemotePlayer(this, 0, 0, this.worldBounds, data.player);
 
             this.players.add(this.hashPlayers[data.player]);
+            this.onlineInformation.addNewPlayer();
         });
         
         console.log(this.game.global)

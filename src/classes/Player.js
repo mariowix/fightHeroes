@@ -20,6 +20,8 @@ class Player extends IPlayer {
 
         this.btnAcel = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.btnBreak = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+        this.eventSentToServer =  this.scene.time.addEvent({ delay: 50, callback: this.emitPosition, callbackScope: this, repeat: -1});
     }
 
     preUpdate() {
@@ -37,8 +39,6 @@ class Player extends IPlayer {
         if (outOfBounds) {
             this.shake();
         }
-
-        this.scene.emit('playerPosition', { position: { x: this.x, y: this.y }, health: this.health, player: this.socketId });
     }
 
     shake() {
@@ -50,6 +50,10 @@ class Player extends IPlayer {
         if (!this.scene.cameras.main.flashEffect.isRunning){
             this.scene.cameras.main.flashEffect.start(1000, 50, 0.5, 0.5, 0.01)
         }
+    }
+
+    emitPosition() {
+        this.scene.emit('playerPosition', { position: { x: this.x, y: this.y }, health: this.health, player: this.socketId, angle: this.angle });
     }
 }
 

@@ -42,6 +42,11 @@ class OnlineInfo extends Phaser.GameObjects.Container {
         this.y = inity - (90)
     }
 
+    addNewPlayer() {
+        this._playerCount++;
+        this.playerCount.setText('Players: (' + this._playerCount + '/'+ this._playerLimit + ')');
+    }
+
 
 
 }
