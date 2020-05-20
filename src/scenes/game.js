@@ -42,7 +42,6 @@ class GameScene extends Phaser.Scene {
 
         this.cameras.main.startFollow(this.player);
 
-
         this.back = this.add.tileSprite(0,0,3000,2500, 'background').setDepth(-5);
 
         this.back.setOrigin(0, 0);
@@ -53,9 +52,6 @@ class GameScene extends Phaser.Scene {
         
         this.enemiesCtrl = new EnemyController(this, this.worldBounds);
         this.configureEvents(socket);
-
-
-        console.log(this)
     }
 
     update() {
@@ -76,7 +72,7 @@ class GameScene extends Phaser.Scene {
     }
 
     configureServer(socket) {
-        this.enemiesCtrl.startWave();
+        this.wavesChecker =  this.time.addEvent({ delay: 1000, callback: this.onWaveChecker, callbackScope: this, repeat: -1});
     }
 
     configureClient(socket) {
@@ -89,7 +85,7 @@ class GameScene extends Phaser.Scene {
         });
 
         socket.on('enemiesChanges', data => {
-            // Update enemies status
+            // Update enemies statusdwsaas
         });
     }
 
@@ -124,6 +120,12 @@ class GameScene extends Phaser.Scene {
             this.configureClient(socket);
         }
 
+    }
+
+    onWaveChecker() {
+        if(!this.enemiesCtrl.enemiesLeft()) {
+            this.enemiesCtrl.startWave();
+        }
     }
 }
 
