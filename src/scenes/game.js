@@ -1,9 +1,8 @@
 const Phaser = require('phaser');
 const { Player } = require('../classes/Player');
 const { RemotePlayer } = require('../classes/RemotePlayer')
-const { Minimap } = require('../classes/Minimap');
-const { EnemiesController } = require('../classes/EnemiesController');
-const { OnlineInfo } = require('../classes/OnlineInfo');
+const { Minimap } = require('../classes/ui/Minimap');
+const { OnlineInfo } = require('../classes/ui/OnlineInfo');
 
 class GameScene extends Phaser.Scene {
     constructor(data) {
@@ -12,6 +11,7 @@ class GameScene extends Phaser.Scene {
 
     init(data) {
         this._roomName = data.roomName;
+        this.isServer = data.isServer;
     }
 
     preload() {
@@ -29,15 +29,14 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
-        let { socket: { id: socketId } } = this.game.global;
+        let { global: { socket } } = this.game;
 
         // Configure groups
         this.players = this.add.group();
         this.enemies = this.add.group();
         
-        this.player = new Player(this, 200, 200, this.worldBounds, socketId);
+        this.player = new Player(this, 200, 200, this.worldBounds, socket.id);
         this.miniMap = new Minimap(this, 10, 10, '', '', this.worldBounds);
-        this.enemyCtrl = new EnemiesController(this, 0, 0, this.worldBounds);
         this.onlineInformation = new OnlineInfo(this, this._roomName, this.worldBounds, 0 , 0);
 
         this.cameras.main.startFollow(this.player);
@@ -49,19 +48,47 @@ class GameScene extends Phaser.Scene {
         this.back.alpha = 0.5
 
         this.players.add(this.player);
-        this.hashPlayers[socketId] = this.player;
+        this.hashPlayers[socket.id] = this.player;
+ 
+        this.configureEvents(socket);
+    }
 
-        // Create socket events
-        let { global: { socket } } = this.game; 
+    update() {
+        let xPercent = this.player.x / this.worldBounds.width;
+        let yPercent = this.player.y / this.worldBounds.height;
+        
+        this.back.x = this.cameras.main.worldView.x;
+        this.back.y = this.cameras.main.worldView.y;
 
+        this.back.tilePositionX = this.back.x + (xPercent*this.back.width);
+        this.back.tilePositionY = this.back.y+ (yPercent*this.back.height);
+    }
+
+    emit(eventName, data) {
+        const { global: { socket } } = this.game;
+
+        socket.emit(eventName, { ...data, roomName: this._roomName })
+    }
+
+    configureServer(socket) {
+
+    }
+
+    configureClient(socket) {
+        socket.on('waveEnd', () => {
+            // Show animation of wave end
+        });
+
+        socket.on('waveStart', () => {
+            // Show animation of get ready
+        });
+    }
+
+    configureCommonEvents(socket) {
         socket.on('playerPositionUpdate', (data) => {
             let player = this.hashPlayers[data.player];
 
-            if (!player) {
-                this.hashPlayers[data.player] =  new RemotePlayer(this, 0, 0, this.worldBounds, data.player);
-                this.players.add(this.hashPlayers[data.player]);
-                return;
-            }
+            if (!player) return;
 
             if (player && player !== this.player) {
                 player.x = data.position.x;
@@ -77,26 +104,17 @@ class GameScene extends Phaser.Scene {
             this.players.add(this.hashPlayers[data.player]);
             this.onlineInformation.addNewPlayer();
         });
-        
-        console.log(this.game.global)
     }
 
-    update() {
+    configureEvents(socket) {
+        this.configureCommonEvents(socket);
 
-        let xPercent = this.player.x / this.worldBounds.width;
-        let yPercent = this.player.y / this.worldBounds.height;
-        
-        this.back.x = this.cameras.main.worldView.x;
-        this.back.y = this.cameras.main.worldView.y;
+        if (this.isServer) {
+            this.configureServer(socket);
+        } else {
+            this.configureClient(socket);
+        }
 
-        this.back.tilePositionX = this.back.x + (xPercent*this.back.width);
-        this.back.tilePositionY = this.back.y+ (yPercent*this.back.height);
-    }
-
-    emit(eventName, data) {
-        const { global: { socket } } = this.game;
-
-        socket.emit(eventName, { ...data, roomName: this._roomName })
     }
 }
 
