@@ -69,12 +69,10 @@ io.on('connection', (socket) => {
 
   // Join Room
   socket.on('joinRoom', (data) => {
-    console.log(`${data.player} requested to join to ${data.roomId}`)
-    console.log(io.sockets.adapter.rooms);
     if (io.sockets.adapter.rooms[data.roomId]) {
       socket.join(data.roomId)
+      io.sockets.in(data.roomId).emit('otherJoined', { player: data.player });
       socket.emit('joinedRoom', { roomName: data.roomId });
-      io.sockets.in(data.roomId).emit('otherJoined', { player: data.player })
     } else {
       socket.emit('errorJoinedRoom');
     }
