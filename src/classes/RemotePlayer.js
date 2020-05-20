@@ -1,6 +1,6 @@
 const Phaser = require('phaser');
-const { IPlayer } = require('./IPlayer')
-const { PlayerIndicator } = require('./PlayerIndicator');
+const { IPlayer } = require('./base/IPlayer')
+const { PlayerIndicator } = require('./ui/PlayerIndicator');
  
 class RemotePlayer extends IPlayer {
     constructor(scene, x, y, worldBounds, socketId) {
