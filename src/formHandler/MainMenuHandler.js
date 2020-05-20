@@ -15,7 +15,7 @@ class MainMenuHandler extends FormHandler {
 
                 socket.on('roomCreated', data => {
                     console.log(data)
-                    this.scene.scene.start('GameScene', data);
+                    this.scene.scene.start('GameScene', { ...data, isServer: true });
                 });
             },
             joinRoom: () => {                

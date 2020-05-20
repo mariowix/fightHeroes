@@ -3,10 +3,9 @@ const Phaser = require('phaser');
 class IEnemy extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x = 0, y = 0, worldBounds, smartness = 1) {
         super(scene, x, y, 'entities', 'spaceship_enemy_red.png');
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
         this.scene = scene;
-        // this.setScale(0.3, 0.3);
+        this.scene.add.existing(this);
+        this.scene.physics.add.existing(this);
 
         this.maxHealth = 100;
         this.health = 100;

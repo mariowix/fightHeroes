@@ -3,6 +3,7 @@ const { Player } = require('../classes/Player');
 const { RemotePlayer } = require('../classes/RemotePlayer')
 const { Minimap } = require('../classes/ui/Minimap');
 const { OnlineInfo } = require('../classes/ui/OnlineInfo');
+const { EnemyController } = require('../classes/controllers/EnemyController');
 
 class GameScene extends Phaser.Scene {
     constructor(data) {
@@ -49,8 +50,12 @@ class GameScene extends Phaser.Scene {
 
         this.players.add(this.player);
         this.hashPlayers[socket.id] = this.player;
- 
+        
+        this.enemiesCtrl = new EnemyController(this, this.worldBounds);
         this.configureEvents(socket);
+
+
+        console.log(this)
     }
 
     update() {
@@ -71,7 +76,7 @@ class GameScene extends Phaser.Scene {
     }
 
     configureServer(socket) {
-
+        this.enemiesCtrl.startWave();
     }
 
     configureClient(socket) {
@@ -81,6 +86,10 @@ class GameScene extends Phaser.Scene {
 
         socket.on('waveStart', () => {
             // Show animation of get ready
+        });
+
+        socket.on('enemiesChanges', data => {
+            // Update enemies status
         });
     }
 
