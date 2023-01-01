@@ -19,7 +19,7 @@
   "dependencies": {
     "common-js": "^0.3.8",
     "express": "^4.17.1",
-    "phaser": "^3.23.0",
+    "phaser": "^3.55.2",
     "pug": "^2.0.4",
     "socket.io": "^2.3.0",
     "uuid": "^8.0.0"
